@@ -724,6 +724,7 @@ function AppContent() {
             scores={roundScores}
             leaderboard={leaderboard}
             round={round}
+            totalRounds={totalRounds}
             onNextRound={handleNextRound}
             isHost={isHost}
             onQuit={leaveRoom}

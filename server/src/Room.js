@@ -230,6 +230,9 @@ class Room {
     if (requestingSessionId !== this.getHostSessionId()) {
       return { error: 'Only the host can start the next round' };
     }
+    if (this.currentRound >= this.totalRounds) {
+      return { error: 'Game is already finished. No more rounds.' };
+    }
 
     // Start a 3-second countdown
     let count = 3;

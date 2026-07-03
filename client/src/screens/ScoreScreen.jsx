@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useI18n } from '../contexts/I18nContext';
 import PlayerAvatar from '../components/PlayerAvatar';
 
-export default function ScoreScreen({ scores, leaderboard, round, onNextRound, isHost, onQuit, nextRoundCountdown }) {
+export default function ScoreScreen({ scores, leaderboard, round, totalRounds, onNextRound, isHost, onQuit, nextRoundCountdown }) {
   const { t } = useI18n();
   const [items, setItems] = useState([]);
 
@@ -313,15 +313,21 @@ export default function ScoreScreen({ scores, leaderboard, round, onNextRound, i
 
       {isHost && (
         <div className="score__actions">
-          <button
-            id="btn-next-round"
-            className={`btn btn--primary btn--large btn--full ${nextRoundCountdown != null ? 'btn--disabled' : ''}`}
-            onClick={onNextRound}
-            type="button"
-            disabled={nextRoundCountdown != null}
-          >
-            ➡️ {t('score.nextRound')}
-          </button>
+          {round >= totalRounds ? (
+            <div className="score__final-loading animate-pulse" style={{ textAlign: 'center', fontStyle: 'italic', color: 'rgba(255, 255, 255, 0.7)', padding: '12px', background: 'rgba(0,0,0,0.3)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.1)', width: '100%', fontWeight: '500' }}>
+              ⏳ {t('score.finalScoresSoon')}
+            </div>
+          ) : (
+            <button
+              id="btn-next-round"
+              className={`btn btn--primary btn--large btn--full ${nextRoundCountdown != null ? 'btn--disabled' : ''}`}
+              onClick={onNextRound}
+              type="button"
+              disabled={nextRoundCountdown != null}
+            >
+              ➡️ {t('score.nextRound')}
+            </button>
+          )}
         </div>
       )}
 
