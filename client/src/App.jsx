@@ -139,6 +139,53 @@ function AppContent() {
     }
   }, [players, sessionId]);
 
+  // Screen Wake Lock (Keep Screen On)
+  useEffect(() => {
+    let wakeLock = null;
+
+    const requestWakeLock = async () => {
+      if (!('wakeLock' in navigator)) return;
+      try {
+        wakeLock = await navigator.wakeLock.request('screen');
+        console.log('[WakeLock] Acquired successfully');
+      } catch (err) {
+        console.warn('[WakeLock] Failed to acquire lock:', err.message);
+      }
+    };
+
+    const releaseWakeLock = async () => {
+      if (wakeLock) {
+        try {
+          await wakeLock.release();
+          console.log('[WakeLock] Released successfully');
+        } catch (err) {
+          console.error('[WakeLock] Error releasing lock:', err.message);
+        }
+        wakeLock = null;
+      }
+    };
+
+    // Keep awake if roomCode is active and not on HOME/JOIN screens
+    const shouldKeepAwake = roomCode && screen !== SCREENS.HOME && screen !== SCREENS.JOIN_ROOM;
+
+    if (shouldKeepAwake) {
+      requestWakeLock();
+
+      const handleVisibilityChange = async () => {
+        if (document.visibilityState === 'visible') {
+          await requestWakeLock();
+        }
+      };
+
+      document.addEventListener('visibilitychange', handleVisibilityChange);
+
+      return () => {
+        document.removeEventListener('visibilitychange', handleVisibilityChange);
+        releaseWakeLock();
+      };
+    }
+  }, [screen, roomCode]);
+
   // Auto-navigate to join if room code in URL and session not restoring
   useEffect(() => {
     const storedSession = localStorage.getItem('speedbac_session_id');
