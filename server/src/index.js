@@ -49,7 +49,7 @@ if (process.env.NODE_ENV === 'production') {
   const clientDistPath = path.join(__dirname, '../../client/dist');
   app.use(express.static(clientDistPath));
   // SPA routing fallback
-  app.get('*', (req, res, next) => {
+  app.get('(.*)', (req, res, next) => {
     if (
       req.path.startsWith('/health') ||
       req.path.startsWith('/stats') ||
