@@ -1,18 +1,30 @@
 {
-  "name": "Speed Bac",
-  "short_name": "SpeedBac",
-  "description": "Speed Bac — Le jeu de mots rapide en multijoueur",
+  "name": "Kodamots",
+  "short_name": "Kodamots",
+  "description": "Kodamots — Le jeu de mots rapide en multijoueur",
   "start_url": "/",
   "display": "standalone",
   "orientation": "portrait",
-  "theme_color": "#0F172A",
-  "background_color": "#0F172A",
+  "theme_color": "#EAF2E8",
+  "background_color": "#EAF2E8",
   "icons": [
     {
-      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎮</text></svg>",
-      "sizes": "any",
-      "type": "image/svg+xml",
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
       "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }
