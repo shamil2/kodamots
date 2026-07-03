@@ -22,8 +22,8 @@
   --color-neon-yellow: #D68910;
   --color-neon-yellow-glow: rgba(214, 137, 16, 0.15);
   --color-text: #2C3E50;
-  --color-text-secondary: #5D6D7E;
-  --color-text-muted: #7F8C8D;
+  --color-text-secondary: #3E4F5F;
+  --color-text-muted: #5A6A70;
   --color-border: rgba(44, 62, 80, 0.1);
   --color-overlay: rgba(44, 62, 80, 0.4);
 
@@ -191,9 +191,9 @@ ul, ol {
   padding-top: env(safe-area-inset-top, 0px);
   padding-bottom: env(safe-area-inset-bottom, 0px);
   animation: fadeIn 0.3s ease;
-  backdrop-filter: blur(8px) saturate(110%);
-  -webkit-backdrop-filter: blur(8px) saturate(110%);
-  background-color: rgba(255, 254, 250, 0.45);
+  backdrop-filter: blur(12px) saturate(120%);
+  -webkit-backdrop-filter: blur(12px) saturate(120%);
+  background-color: rgba(255, 254, 250, 0.70);
 }
 
 .screen--center {

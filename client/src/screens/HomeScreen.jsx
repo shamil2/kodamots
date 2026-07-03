@@ -35,8 +35,20 @@ function FloatingLetters() {
   );
 }
 
+import { soundManager } from '../utils/sounds';
+
 export default function HomeScreen({ onCreateRoom, onJoinRoom }) {
   const { t } = useI18n();
+
+  const handleCreate = () => {
+    soundManager.play('click');
+    onCreateRoom();
+  };
+
+  const handleJoin = () => {
+    soundManager.play('click');
+    onJoinRoom();
+  };
 
   return (
     <div className="screen home" id="home-screen">
@@ -48,7 +60,7 @@ export default function HomeScreen({ onCreateRoom, onJoinRoom }) {
 
       <div className="home__content">
         <div className="home__logo">
-          <h1 className="home__title">Speed Bac</h1>
+          <h1 className="home__title">{t('app.title')}</h1>
           <p className="home__subtitle">{t('app.subtitle')}</p>
         </div>
 
@@ -56,7 +68,7 @@ export default function HomeScreen({ onCreateRoom, onJoinRoom }) {
           <button
             id="btn-create-room"
             className="btn btn--primary btn--large btn--full"
-            onClick={onCreateRoom}
+            onClick={handleCreate}
             type="button"
           >
             🎮 {t('home.createRoom')}
@@ -64,7 +76,7 @@ export default function HomeScreen({ onCreateRoom, onJoinRoom }) {
           <button
             id="btn-join-room"
             className="btn btn--secondary btn--large btn--full"
-            onClick={onJoinRoom}
+            onClick={handleJoin}
             type="button"
           >
             🚀 {t('home.joinRoom')}

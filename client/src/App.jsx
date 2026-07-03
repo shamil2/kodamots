@@ -13,6 +13,7 @@ import ScoreScreen from './screens/ScoreScreen';
 import FinalScoreScreen from './screens/FinalScoreScreen';
 import RapideGameScreen from './screens/RapideGameScreen';
 import RapideRoundSummaryScreen from './screens/RapideRoundSummaryScreen';
+import { soundManager } from './utils/sounds';
 
 const SCREENS = {
   HOME: 'HOME',
@@ -62,6 +63,18 @@ function useOrientation() {
 
 function AppContent() {
   const { socket, connected, sessionId, clearSession } = useSocket();
+
+  // Sound effects state
+  const [soundsEnabled, setSoundsEnabled] = useState(() => soundManager.isEnabled());
+
+  const toggleSound = useCallback(() => {
+    const nextVal = !soundsEnabled;
+    setSoundsEnabled(nextVal);
+    soundManager.toggle(nextVal);
+    if (nextVal) {
+      soundManager.play('click');
+    }
+  }, [soundsEnabled]);
 
   // State machine
   const [screen, setScreen] = useState(SCREENS.HOME);
@@ -254,6 +267,7 @@ function AppContent() {
 
     // Game: letter spin
     const handleLetterSpin = (data) => {
+      soundManager.play('start');
       setNextRoundCountdown(null);
       setLetter(data.letter);
       setRound(data.round || 1);
@@ -265,6 +279,7 @@ function AppContent() {
 
     // Game: input phase
     const handleInputPhase = (data) => {
+      soundManager.play('start');
       setCategories(data.categories || []);
       setLetter(data.letter || letter);
       setRound(data.round || round);
@@ -292,6 +307,7 @@ function AppContent() {
 
     // Score: round results
     const handleRoundResults = (data) => {
+      soundManager.play('success');
       setRoundScores(data.scores || null);
       setLeaderboard(data.leaderboard || []);
       setRound(data.round || round);
@@ -300,6 +316,7 @@ function AppContent() {
 
     // Score: final results
     const handleFinalResults = (data) => {
+      soundManager.play('victory');
       setFinalLeaderboard(data.finalLeaderboard || []);
       setScreen(SCREENS.FINAL_SCORES);
     };
@@ -429,10 +446,14 @@ function AppContent() {
 
     const handleNextRoundCountdown = (data) => {
       setNextRoundCountdown(data.seconds);
+      if (data.seconds > 0) {
+        soundManager.play('tick');
+      }
     };
 
     // Rapide mode listeners
     const handleRapideGameStarted = (data) => {
+      soundManager.play('start');
       setRapidePlayerCards(data.playerCards);
       setRapideMyCards(data.playerCards[sessionId] || []);
       setRapideTheme(data.theme);
@@ -459,6 +480,7 @@ function AppContent() {
     };
 
     const handleRapideAnswerAccepted = (data) => {
+      soundManager.play('success');
       setRapideValidCount(data.validAnswersCount);
       setRapidePlayerCards((prev) => ({ ...prev, [data.playerId]: data.playerCards }));
       if (data.playerId === sessionId) {
@@ -471,6 +493,7 @@ function AppContent() {
     };
 
     const handleRapideAnswerRejected = (data) => {
+      soundManager.play('fail');
       if (data.playerId === sessionId) {
         setRapideMyCards((prev) => [...prev, data.letter]);
       }
@@ -481,6 +504,7 @@ function AppContent() {
     };
 
     const handleRapideChallengeStarted = (data) => {
+      soundManager.play('fail');
       setActiveChallenge({
         answerId: data.answerId,
         playerId: data.playerId,
@@ -509,6 +533,7 @@ function AppContent() {
     };
 
     const handleRapideRoundEnded = (data) => {
+      soundManager.play('success');
       setRapideRoundData(data);
       setLeaderboard(data.scores);
       setActiveChallenge(null);
@@ -516,6 +541,7 @@ function AppContent() {
     };
 
     const handleRapideNewRoundStarted = (data) => {
+      soundManager.play('start');
       setRapideMyCards(data.playerCards[sessionId] || []);
       setRapidePlayerCards(data.playerCards);
       setRapideTheme(data.theme);
@@ -528,6 +554,7 @@ function AppContent() {
     };
 
     const handleRapideFinalScores = (data) => {
+      soundManager.play('victory');
       setFinalLeaderboard(data.finalLeaderboard);
       setActiveChallenge(null);
       setScreen(SCREENS.FINAL_SCORES);
@@ -830,6 +857,37 @@ function AppContent() {
   return (
     <div className={`app ${getAppBackgroundClass()}`}>
       {isLandscape && <OrientationWarning />}
+      
+      {screen !== SCREENS.HOME && (
+        <button
+          onClick={toggleSound}
+          className="sound-toggle-btn"
+          style={{
+            position: 'absolute',
+            top: '16px',
+            right: '16px',
+            zIndex: 1000,
+            background: 'var(--color-surface)',
+            border: '2px solid var(--color-text)',
+            borderRadius: '50%',
+            width: '40px',
+            height: '40px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '1.15rem',
+            boxShadow: 'var(--shadow-md)',
+            cursor: 'pointer',
+            transition: 'transform 0.15s ease',
+            color: 'var(--color-text)',
+            fontWeight: 'bold'
+          }}
+          title="Toggle Sound"
+        >
+          {soundsEnabled ? '🔊' : '🔇'}
+        </button>
+      )}
+
       {renderScreen()}
       {error && <div className="toast" id="error-toast">{error}</div>}
       {!connected && screen !== SCREENS.HOME && (
